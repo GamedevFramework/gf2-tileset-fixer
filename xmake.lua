@@ -7,7 +7,7 @@ add_requires("gamedevframework2")
 add_requires("nlohmann_json")
 
 if is_kind("static") then
-    add_requireconfs("gamedevframework2", {system = false, configs = {shared = false}})
+    add_requireconfs("gamedevframework2", {system = false, configs = {shared = false, graphics = false, network = false, audio = false, physics = false, imgui = false, framework = false}})
     add_requireconfs("gamedevframework2.**", {system = false, configs = {shared = false}})
 end
 

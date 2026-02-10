@@ -27,7 +27,7 @@ jobs:
     name: ${{ matrix.configurations.name }} ${{ matrix.configurations.arch }} (${{ matrix.configurations.kind }} ${{ matrix.configurations.mode }})
     runs-on: ${{ matrix.configurations.runner }}
     steps:
-      - name: Checkout gf2
+      - name: Checkout gf2-tileset-fixer
         uses: actions/checkout@v6
 
       - name: Configure xmake environment
