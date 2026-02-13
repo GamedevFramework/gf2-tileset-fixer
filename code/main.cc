@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Zlib
 // Copyright (c) 2026 Arthur Hugeat
 
+#include "gf2/core/Rect.h"
 #include <algorithm>
 #include <cassert>
 #include <cstddef>
@@ -70,24 +71,43 @@ namespace {
         continue;
       }
       const gf::Vec2I TileIndex(std::int32_t(index) % TilesetLayout.w, std::int32_t(index) / TilesetLayout.w);
+      const gf::Vec2I TilesetLocation(TileIndex * (OriginalTileSize + gf::vec(2, 2)));
 
-      // Copy the image
-      for (int index_x = 0; index_x < OriginalTileSize.w; ++index_x) {
-        for (int index_y = 0; index_y < OriginalTileSize.h; ++index_y) {
-          image.put_pixel((TileIndex * NewTileSize) + gf::vec(index_x + 1, index_y + 1), tile_image({index_x, index_y}));
-        }
-      }
+      tile_image.blit_to(image, TilesetLocation + gf::vec(1, 1));
 
-      // Copy the border
-      for (int index_x = 0; index_x < OriginalTileSize.w; ++index_x) {
-        image.put_pixel((TileIndex * NewTileSize) + gf::vec(index_x + 1, 0), tile_image({index_x, 0}));
-        image.put_pixel((TileIndex * NewTileSize) + gf::vec(index_x + 1, NewTileSize.h - 1), tile_image({index_x, OriginalTileSize.h - 1}));
-      }
-
-      for (int index_y = 0; index_y < OriginalTileSize.h; ++index_y) {
-        image.put_pixel((TileIndex * NewTileSize) + gf::vec(0, index_y + 1), tile_image({0, index_y}));
-        image.put_pixel((TileIndex * NewTileSize) + gf::vec(NewTileSize.w - 1, index_y + 1), tile_image({OriginalTileSize.w - 1, index_y}));
-      }
+      // Copy the borders
+      tile_image.blit_to(
+        gf::RectI::from_position_size(
+          gf::vec(0, 0),
+          gf::vec(1, OriginalTileSize.h)
+        ),
+        image,
+        TilesetLocation + gf::vec(0, 1)
+      );
+      tile_image.blit_to(
+        gf::RectI::from_position_size(
+          gf::vec(OriginalTileSize.w - 1, 0),
+          gf::vec(1, OriginalTileSize.h)
+        ),
+        image,
+        TilesetLocation + gf::vec(OriginalTileSize.w + 1, 1)
+      );
+      tile_image.blit_to(
+        gf::RectI::from_position_size(
+          gf::vec(0, 0),
+          gf::vec(OriginalTileSize.w, 1)
+        ),
+        image,
+        TilesetLocation + gf::vec(1, 0)
+      );
+      tile_image.blit_to(
+        gf::RectI::from_position_size(
+          gf::vec(0, OriginalTileSize.h - 1),
+          gf::vec(OriginalTileSize.w, 1)
+        ),
+        image,
+        TilesetLocation + gf::vec(1, OriginalTileSize.h + 1)
+      );
 
       // Copy corner
       image.put_pixel((TileIndex * NewTileSize) + gf::vec(0, 0), tile_image({0, 0}));
